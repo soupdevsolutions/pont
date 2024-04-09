@@ -10,10 +10,7 @@ pub struct NemoFile {
 }
 
 impl NemoFile {
-    pub fn create_default(name: &str, path: &Path) -> Result<Self, Box<dyn std::error::Error>> {
-        let path = path.join("nemofile.yaml");
-        let content = format!("name: {}\ncommands: []\nignore: []", name);
-        std::fs::write(path, &content)?;
+    pub fn empty(name: &str) -> Result<Self, Box<dyn std::error::Error>> {
         Ok(Self {
             name: name.to_string(),
             commands: vec![],
