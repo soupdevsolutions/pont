@@ -1,1 +1,1 @@
-pub mod nemofile;
+pub mod nemoproject;
