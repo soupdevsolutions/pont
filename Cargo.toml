@@ -3,6 +3,17 @@ name = "nemo"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "nemo"
+path = "src/lib.rs"
+
+[[bin]]
+name = "nemo"
+path = "src/main.rs"
+
+
 [dependencies]
 clap = "4.5.4"
+serde = { version = "1.0.197", features = ["derive"] }
+serde_yaml = "0.9.34"
 tokio = {version = "1.37.0", features = ["full"]}

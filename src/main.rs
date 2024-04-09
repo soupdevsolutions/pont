@@ -1,3 +1,5 @@
+use nemo::nemofile::NemoFile;
+
 fn main() {
 
     let init_command = clap::Command::new("init");
@@ -21,6 +23,8 @@ fn main() {
         }
         Some(("new", matches)) => {
             let name = matches.get_one::<String>("name").unwrap(); 
+            let nemofile = NemoFile::parse("./nemofile.yaml").unwrap();
+            println!("Nemo file: {:?}", nemofile);
             println!("Creating a new Nemo project with the name: {}", name);
         }
         Some(("clone", matches)) => {

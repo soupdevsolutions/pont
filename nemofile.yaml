@@ -1,0 +1,6 @@
+name: nemo
+commands:
+  - echo "Initializing Nemo..."
+ignore:
+  - .git/*
+  - .gitignore
