@@ -1,3 +1,4 @@
+use auth_git2::GitAuthenticator;
 use nemo::nemoproject::NemoProject;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -34,7 +35,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let name = matches.get_one::<String>("name").unwrap();
             let repo_url = matches.get_one::<String>("from").unwrap();
             let dir_name = std::env::current_dir()?.join(name);
-            let _repo = git2::build::RepoBuilder::new().clone(repo_url, &dir_name)?;
+
+            let auth = GitAuthenticator::default();
+            let _repo = auth.clone_repo(repo_url, &dir_name)?;
 
             println!("Building Nemo project {} from the repository: {}", name, repo_url);
 
