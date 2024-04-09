@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use super::NemoFile;
 
+#[derive(Debug)]
 pub struct NemoProject {
     pub name: String,
     pub nemofile: NemoFile,
@@ -13,6 +14,16 @@ impl NemoProject {
         let nemofile = NemoFile::empty(&name)?;
         Ok(Self {
             name: name.to_string(),
+            nemofile,
+            path,
+        })
+    }
+
+    pub fn load(path: PathBuf) -> Result<Self, Box<dyn std::error::Error>> {
+        let file = std::fs::File::open(path.join("nemofile.yaml"))?;
+        let nemofile: NemoFile = serde_yaml::from_reader(file)?;
+        Ok(Self {
+            name: nemofile.name.clone(),
             nemofile,
             path,
         })
