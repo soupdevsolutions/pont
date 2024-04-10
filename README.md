@@ -39,5 +39,3 @@ git push
 cd ../
 nemo build --name cool_rust_app --from <your-remote-repo>
 ```
-
-

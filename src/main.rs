@@ -1,5 +1,6 @@
 use auth_git2::GitAuthenticator;
-use nemo::nemoproject::NemoProject;
+use nemo::nemoproject::{NemoProject, Source};
+use url::Url;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let init_command = clap::Command::new("init");
@@ -33,7 +34,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         Some(("build", matches)) => {
             let name = matches.get_one::<String>("name").unwrap();
-            let repo_url = matches.get_one::<String>("from").unwrap();
+            let source = matches.get_one::<String>("from").unwrap();
+            let source: Url = source.parse()?;
+            let source = Source::parse(&source)?;
+
             let dir_name = std::env::current_dir()?.join(name);
 
             let auth = GitAuthenticator::default();

@@ -1,6 +1,8 @@
-use std::path::PathBuf;
+use std::{fs, path::{Path, PathBuf}};
 
-use super::NemoFile;
+use walkdir::WalkDir;
+
+use super::{NemoFile, Source};
 
 #[derive(Debug)]
 pub struct NemoProject {
@@ -19,13 +21,34 @@ impl NemoProject {
         })
     }
 
-    pub fn load(path: PathBuf) -> Result<Self, Box<dyn std::error::Error>> {
-        let file = std::fs::File::open(path.join("nemofile.yaml"))?;
-        let nemofile: NemoFile = serde_yaml::from_reader(file)?;
+    pub fn load(source: Source, target: &Path) -> Result<Self, Box<dyn std::error::Error>> {
+         match source {
+            Source::GitRepository(url) => {
+                let auth = auth_git2::GitAuthenticator::default();
+                let _repo = auth.clone_repo(&url, target)?;
+            }
+            Source::LocalDirectory(path) => {
+                for entry in WalkDir::new(&path) {
+                    let entry = entry?;
+                    let from = entry.path();
+                    let to = target.join(from.strip_prefix(&path)?);
+
+                    if entry.file_type().is_dir() {
+                        if let Err(e) = fs::create_dir(to) {
+                            eprintln!("Error creating directory: {}", e);
+                        }
+                    } else if entry.file_type().is_file() {
+                        fs::copy(from, to)?;
+                    }
+                }
+            }
+        };
+        let nemofile = NemoFile::parse(&target.join("nemofile.yaml"))?;
+        let name = nemofile.name.clone();
         Ok(Self {
-            name: nemofile.name.clone(),
+            name,
             nemofile,
-            path,
+            path: target.into(),
         })
     }
 

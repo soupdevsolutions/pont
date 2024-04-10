@@ -19,3 +19,5 @@ git2 = "0.18.3"
 serde = { version = "1.0.197", features = ["derive"] }
 serde_yaml = "0.9.34"
 tokio = {version = "1.37.0", features = ["full"]}
+url = "2.5.0"
+walkdir = "2.5.0"
