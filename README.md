@@ -26,7 +26,7 @@ nemo build --name <template-name> --from <source>
 
 ```bash
 nemo new rust_server_template
-cd ./rust_cli_template
+cd ./rust_server_template
 
 cargo init
 cargo add axum tokio serde serde_json
