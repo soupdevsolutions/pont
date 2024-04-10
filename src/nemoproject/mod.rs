@@ -1,7 +1,7 @@
 pub mod nemofile;
 pub mod nemoproject;
-pub mod project_options;
+pub mod source;
 
 pub use nemofile::*;
 pub use nemoproject::*;
-pub use project_options::*;
+pub use source::*;

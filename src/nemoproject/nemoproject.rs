@@ -1,4 +1,7 @@
-use std::{fs, path::{Path, PathBuf}};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 
 use walkdir::WalkDir;
 
@@ -13,7 +16,7 @@ pub struct NemoProject {
 
 impl NemoProject {
     pub fn new(name: &str, path: PathBuf) -> Result<Self, Box<dyn std::error::Error>> {
-        let nemofile = NemoFile::empty(&name)?;
+        let nemofile = NemoFile::empty(name)?;
         Ok(Self {
             name: name.to_string(),
             nemofile,
@@ -22,10 +25,10 @@ impl NemoProject {
     }
 
     pub fn load(source: Source, target: &Path) -> Result<Self, Box<dyn std::error::Error>> {
-         match source {
+        match source {
             Source::GitRepository(url) => {
                 let auth = auth_git2::GitAuthenticator::default();
-                let _repo = auth.clone_repo(&url, target)?;
+                let _repo = auth.clone_repo(url, target)?;
             }
             Source::LocalDirectory(path) => {
                 for entry in WalkDir::new(&path) {

@@ -1,4 +1,3 @@
-use auth_git2::GitAuthenticator;
 use nemo::nemoproject::{NemoProject, Source};
 use url::Url;
 
@@ -19,10 +18,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     match matches.subcommand() {
         Some(("init", _)) => {
             let current_dir = std::env::current_dir()?;
-            let current_dir_name = current_dir.clone().file_name().unwrap().to_str().unwrap().to_string();
+            let current_dir_name = current_dir
+                .clone()
+                .file_name()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .to_string();
             let nemo_project = NemoProject::new(&current_dir_name, current_dir)?;
 
-            println!("Initializing a new Nemo project in the directory: {:?}", current_dir_name);
+            println!(
+                "Initializing a new Nemo project in the directory: {:?}",
+                current_dir_name
+            );
             nemo_project.save(false)?;
         }
         Some(("new", matches)) => {
@@ -40,12 +48,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             let dir_name = std::env::current_dir()?.join(name);
 
-            let auth = GitAuthenticator::default();
-            let _repo = auth.clone_repo(repo_url, &dir_name)?;
-
-            println!("Building Nemo project {} from the repository: {}", name, repo_url);
-
-            let nemo_project = NemoProject::load(dir_name)?;
+            println!("Building Nemo project {} from: {:?}", name, source);
+            let nemo_project = NemoProject::load(source, &dir_name)?;
             println!("Loaded Nemo project: {:?}", nemo_project);
         }
         _ => unreachable!(),
