@@ -1,3 +1,4 @@
+use std::{fs::File, io::{Read, Write}};
 use crate::file_management::Directory;
 
 use super::{NemoFile, Source};
@@ -32,9 +33,8 @@ impl NemoProject {
         };
 
         let nemofile = NemoFile::parse(&target.path.join("nemofile.yaml"))?;
-        let name = nemofile.name.clone();
         Ok(Self {
-            name,
+            name: target.name(),
             nemofile,
             directory: target.clone(),
         })
@@ -49,8 +49,15 @@ impl NemoProject {
         Ok(())
     }
 
-    pub fn build(&self, name: &str) -> Result<(), Box<dyn std::error::Error>> {
-        // replace all instances of the template name with the new project name
+    pub fn build(&self) -> Result<(), Box<dyn std::error::Error>> {
+        let files = self.directory.get_files()?;
+        for file in files {
+            let mut file = File::open(file)?;
+            let mut content = String::new();
+            file.read_to_string(&mut content)?;
+            let content = content.replace(&self.nemofile.name, &self.name);
+            file.write_all(content.as_bytes())?;
+        }
 
         // run all the commands from the nemofile
 

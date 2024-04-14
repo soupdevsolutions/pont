@@ -13,7 +13,9 @@ impl Source {
         match source.scheme() {
             "http" | "https" => Ok(Self::GitRepository(source.clone())),
             "file" => Ok(Self::LocalDirectory(Directory::new(
-                &source.to_file_path().map_err(|e| format!("Invalid file path: {:?}", e))?,
+                &source
+                    .to_file_path()
+                    .map_err(|e| format!("Invalid file path: {:?}", e))?,
             )?)),
             _ => Err("Unsupported source type".into()),
         }

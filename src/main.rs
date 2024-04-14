@@ -21,7 +21,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let current_dir = Directory::current()?;
     match matches.subcommand() {
         Some(("init", _)) => {
-            let nemo_project = NemoProject::try_from(&current_dir)?; 
+            let nemo_project = NemoProject::try_from(&current_dir)?;
             nemo_project.save(false)?;
         }
         Some(("new", matches)) => {
@@ -31,14 +31,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         Some(("build", matches)) => {
             let name = matches.get_one::<String>("name").unwrap();
-
             let source = matches.get_one::<String>("from").unwrap();
+
             let source: Url = source.parse()?;
             let source = Source::parse(&source)?;
 
-            let nemo_project = NemoProject::load(source, &current_dir)?;
+            let target = current_dir.create_subdir(&name)?;
 
-            nemo_project.build(&name)?;
+            let nemo_project = NemoProject::load(source, &target)?;
+
+            nemo_project.build()?;
         }
         _ => unreachable!(),
     }

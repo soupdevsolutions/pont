@@ -30,6 +30,13 @@ impl Directory {
         self.path.clone()
     }
 
+    pub fn create_subdir(&self, name: &str) -> Result<Self, Box<dyn std::error::Error>> {
+        let path = self.path.join(name);
+        std::fs::create_dir(&path)?;
+
+        Ok(Self { path })
+    }
+
     pub fn copy_content(&self, target: &Path) -> Result<Self, Box<dyn std::error::Error>> {
         for entry in walkdir::WalkDir::new(&self.path) {
             let entry = entry?;
@@ -48,6 +55,18 @@ impl Directory {
         Ok(Self {
             path: target.into(),
         })
+    }
+
+    pub fn get_files(&self) -> Result<Vec<PathBuf>, Box<dyn std::error::Error>> {
+        let mut files = vec![];
+
+        for entry in walkdir::WalkDir::new(&self.path) {
+            let entry = entry?;
+            if entry.file_type().is_file() {
+                files.push(entry.path().into());
+            }
+        }
+        Ok(files)
     }
 }
 
