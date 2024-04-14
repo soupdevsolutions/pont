@@ -1,18 +1,20 @@
-use std::path::PathBuf;
-
 use url::Url;
+
+use crate::file_management::Directory;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Source {
     GitRepository(Url),
-    LocalDirectory(PathBuf),
+    LocalDirectory(Directory),
 }
 
 impl Source {
     pub fn parse(source: &Url) -> Result<Self, Box<dyn std::error::Error>> {
         match source.scheme() {
             "http" | "https" => Ok(Self::GitRepository(source.clone())),
-            "file" => Ok(Self::LocalDirectory(PathBuf::from(source.path()))),
+            "file" => Ok(Self::LocalDirectory(Directory::new(
+                &source.to_file_path().map_err(|e| format!("Invalid file path: {:?}", e))?,
+            )?)),
             _ => Err("Unsupported source type".into()),
         }
     }
@@ -35,13 +37,16 @@ mod tests {
 
     #[test]
     fn test_local_directory_parse() {
-        let path = "/path/to/project";
+        let path = "/";
         let url = Url::parse(&format!("file://{}", path)).unwrap();
 
         let source = Source::parse(&url);
 
         assert_ok!(&source);
-        assert_eq!(Source::LocalDirectory(PathBuf::from(path)), source.unwrap());
+        assert_eq!(
+            Source::LocalDirectory(Directory::try_from(path).unwrap()),
+            source.unwrap()
+        );
     }
 
     #[test]
