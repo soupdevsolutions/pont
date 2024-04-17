@@ -37,7 +37,7 @@ impl Directory {
         Ok(Self { path })
     }
 
-    pub fn copy_content(&self, target: &Path) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn copy_files(&self, target: &Path) -> Result<Self, Box<dyn std::error::Error>> {
         for entry in walkdir::WalkDir::new(&self.path) {
             let entry = entry?;
             let from = entry.path();

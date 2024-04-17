@@ -28,7 +28,7 @@ impl NemoProject {
             }
             Source::LocalDirectory(path) => {
                 let dir = Directory::try_from(path)?;
-                dir.copy_content(&target.path())?;
+                dir.copy_files(&target.path())?;
             }
         };
 
@@ -53,16 +53,22 @@ impl NemoProject {
         let ignore_files = self.nemofile.ignore.clone();
 
         let files = self.directory.get_files(Some(&ignore_files))?;
-        for f in files {
+        for f in &files {
             let mut file = File::open(f.clone())?;
+            let file_name = f.file_name().unwrap().to_string_lossy().to_string();
+
             let mut content = String::new();
             file.read_to_string(&mut content)?;
-            println!("Replacing {} with {}", &self.nemofile.name, &self.name);
             let content = content.replace(&self.nemofile.name, &self.name);
-            println!("content: {}", content);
 
             let mut file = File::create(f)?;
             file.write_all(content.as_bytes())?;
+
+            if file_name.contains(&self.nemofile.name) {
+                let new_name = file_name.replace(&self.nemofile.name, &self.name);
+                let new_path = f.parent().unwrap().join(new_name);
+                std::fs::rename(f, new_path)?;
+            }
         }
 
         self.nemofile.commands.iter().for_each(|command| {
@@ -70,6 +76,7 @@ impl NemoProject {
             cmd.arg("-c").arg(command);
             let _status = cmd.status().expect("Failed to execute command");
             });
+
 
         remove_file(self.directory.path.join("nemofile.yaml"))?;
 
