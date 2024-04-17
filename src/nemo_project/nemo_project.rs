@@ -1,4 +1,4 @@
-use std::{fs::File, io::{Read, Write}};
+use std::{fs::{remove_file, File}, io::{Read, Write}};
 use crate::file_management::Directory;
 
 use super::{NemoFile, Source};
@@ -50,18 +50,28 @@ impl NemoProject {
     }
 
     pub fn build(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let files = self.directory.get_files()?;
-        for file in files {
-            let mut file = File::open(file)?;
+        let ignore_files = self.nemofile.ignore.clone();
+
+        let files = self.directory.get_files(Some(&ignore_files))?;
+        for f in files {
+            let mut file = File::open(f.clone())?;
             let mut content = String::new();
             file.read_to_string(&mut content)?;
+            println!("Replacing {} with {}", &self.nemofile.name, &self.name);
             let content = content.replace(&self.nemofile.name, &self.name);
+            println!("content: {}", content);
+
+            let mut file = File::create(f)?;
             file.write_all(content.as_bytes())?;
         }
 
-        // run all the commands from the nemofile
+        self.nemofile.commands.iter().for_each(|command| {
+            let mut cmd = std::process::Command::new("sh");
+            cmd.arg("-c").arg(command);
+            let _status = cmd.status().expect("Failed to execute command");
+            });
 
-        // delete the nemofile
+        remove_file(self.directory.path.join("nemofile.yaml"))?;
 
         Ok(())
     }

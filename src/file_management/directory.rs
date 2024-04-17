@@ -57,11 +57,25 @@ impl Directory {
         })
     }
 
-    pub fn get_files(&self) -> Result<Vec<PathBuf>, Box<dyn std::error::Error>> {
+    pub fn get_files(&self, ignored_dirs: Option<&[String]>) -> Result<Vec<PathBuf>, Box<dyn std::error::Error>> {
         let mut files = vec![];
+        let mut director_it = walkdir::WalkDir::new(&self.path).into_iter();
 
-        for entry in walkdir::WalkDir::new(&self.path) {
-            let entry = entry?;
+        loop {
+            let entry = match director_it.next() {
+                Some(Ok(entry)) => entry,
+                Some(Err(e)) => return Err(e.into()),
+                None => break,
+            };
+
+            let file_name = entry.file_name().to_string_lossy().to_string();
+            let should_skip = ignored_dirs.is_some() && ignored_dirs.unwrap().contains(&file_name);
+
+            if entry.file_type().is_dir() && should_skip {
+                director_it.skip_current_dir();
+                continue;
+            } 
+
             if entry.file_type().is_file() {
                 files.push(entry.path().into());
             }
