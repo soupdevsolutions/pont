@@ -1,5 +1,7 @@
 # Nemo
 
+[![CI](https://github.com/soupdevsolutions/nemo/actions/workflows/ci.yml/badge.svg)](https://github.com/soupdevsolutions/nemo/actions/workflows/ci.yml)
+
 Nemo is a simple project template generator and loader. You can generate templates and load them from Git repositories or local directories.
 
 ## Installation
