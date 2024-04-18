@@ -1,6 +1,6 @@
 use nemo::{
     file_management::Directory,
-    nemo_project::{NemoProject, Source},
+    nemo_data::{NemoProject, Source},
 };
 use url::Url;
 
@@ -36,7 +36,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let source: Url = source.parse()?;
             let source = Source::parse(&source)?;
 
-            let target = current_dir.create_subdir(&name)?;
+            let target = current_dir.create_subdir(name)?;
 
             let nemo_project = NemoProject::load(source, &target)?;
 

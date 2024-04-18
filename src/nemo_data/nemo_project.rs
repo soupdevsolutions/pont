@@ -30,8 +30,7 @@ impl NemoProject {
                 let _repo = auth.clone_repo(url, &target.path)?;
             }
             Source::LocalDirectory(path) => {
-                let dir = Directory::try_from(path)?;
-                dir.copy_files(&target.path())?;
+                path.copy_files(&target.path())?;
             }
         };
 
