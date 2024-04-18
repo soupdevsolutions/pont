@@ -1,5 +1,8 @@
-use std::{fs::{remove_file, File}, io::{Read, Write}};
 use crate::file_management::Directory;
+use std::{
+    fs::{remove_file, File},
+    io::{Read, Write},
+};
 
 use super::{NemoFile, Source};
 
@@ -75,8 +78,7 @@ impl NemoProject {
             let mut cmd = std::process::Command::new("sh");
             cmd.arg("-c").arg(command);
             let _status = cmd.status().expect("Failed to execute command");
-            });
-
+        });
 
         remove_file(self.directory.path.join("nemofile.yaml"))?;
 
