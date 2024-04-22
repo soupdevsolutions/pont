@@ -4,7 +4,7 @@ use std::{
     io::{Read, Write},
 };
 
-use super::{NemoFile, Source};
+use super::{NemoFile, Source, NEMO_FILE_NAME};
 
 #[derive(Debug)]
 pub struct NemoProject {
@@ -34,7 +34,7 @@ impl NemoProject {
             }
         };
 
-        let nemofile = NemoFile::parse(&target.path.join("nemofile.yaml"))?;
+        let nemofile = NemoFile::parse(&target.path.join(NEMO_FILE_NAME))?;
         Ok(Self {
             name: target.name(),
             nemofile,
@@ -46,7 +46,7 @@ impl NemoProject {
         if new_directory {
             std::fs::create_dir(&self.directory.path)?;
         }
-        let file = std::fs::File::create(self.directory.path.join("nemofile.yaml"))?;
+        let file = std::fs::File::create(self.directory.path.join(NEMO_FILE_NAME))?;
         serde_yaml::to_writer(file, &self.nemofile)?;
         Ok(())
     }
@@ -79,7 +79,7 @@ impl NemoProject {
             let _status = cmd.status().expect("Failed to execute command");
         });
 
-        remove_file(self.directory.path.join("nemofile.yaml"))?;
+        remove_file(self.directory.path.join(NEMO_FILE_NAME))?;
 
         Ok(())
     }
@@ -89,7 +89,7 @@ impl TryFrom<&Directory> for NemoProject {
     type Error = Box<dyn std::error::Error>;
 
     fn try_from(directory: &Directory) -> Result<Self, Self::Error> {
-        let nemofile = NemoFile::parse(&directory.path.join("nemofile.yaml"))?;
+        let nemofile = NemoFile::parse(&directory.path.join(NEMO_FILE_NAME))?;
         let name = nemofile.name.clone();
         Ok(Self {
             name,
