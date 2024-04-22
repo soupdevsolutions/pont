@@ -22,12 +22,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     match matches.subcommand() {
         Some(("init", _)) => {
             let nemo_project = NemoProject::try_from(&current_dir)?;
-            nemo_project.save(false)?;
+            nemo_project.save()?;
         }
         Some(("new", matches)) => {
             let name = matches.get_one::<String>("name").unwrap();
-            let nemo_project = NemoProject::new(name, &current_dir)?;
-            nemo_project.save(true)?;
+            let directory = current_dir.create_subdir(name)?;
+            let nemo_project = NemoProject::new(name, &directory)?;
+            nemo_project.save()?;
         }
         Some(("build", matches)) => {
             let name = matches.get_one::<String>("name").unwrap();

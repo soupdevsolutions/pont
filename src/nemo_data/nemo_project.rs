@@ -42,10 +42,7 @@ impl NemoProject {
         })
     }
 
-    pub fn save(&self, new_directory: bool) -> Result<(), Box<dyn std::error::Error>> {
-        if new_directory {
-            std::fs::create_dir(&self.directory.path)?;
-        }
+    pub fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
         let file = std::fs::File::create(self.directory.path.join(NEMO_FILE_NAME))?;
         serde_yaml::to_writer(file, &self.nemofile)?;
         Ok(())
@@ -89,10 +86,10 @@ impl TryFrom<&Directory> for NemoProject {
     type Error = Box<dyn std::error::Error>;
 
     fn try_from(directory: &Directory) -> Result<Self, Self::Error> {
-        let nemofile = NemoFile::parse(&directory.path.join(NEMO_FILE_NAME))?;
-        let name = nemofile.name.clone();
+        let name = directory.name();
+        let nemofile = NemoFile::empty(&name)?;
         Ok(Self {
-            name,
+            name: name.to_string(),
             nemofile,
             directory: directory.clone(),
         })
