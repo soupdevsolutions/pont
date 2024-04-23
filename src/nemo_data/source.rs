@@ -17,7 +17,7 @@ impl Source {
             "file" => {
                 let current_dir = Directory::current()?;
                 let source = source.strip_prefix("file://").unwrap_or(&source);
-                let source = current_dir.path.join(source); 
+                let source = current_dir.path.join(source);
                 Ok(Self::LocalDirectory(Directory::new(&source)?))
             }
             _ => Err("Unsupported source type".into()),
