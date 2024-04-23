@@ -62,4 +62,4 @@ jobs:
         - name: Install Nemo
           run: cargo install --path .
         - name: Run integration tests
-          run: cargo test --test_nemo
+          run: cargo test --test test_nemo
