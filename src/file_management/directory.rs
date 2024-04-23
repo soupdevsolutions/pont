@@ -8,7 +8,7 @@ pub struct Directory {
 impl Directory {
     pub fn new(path: &Path) -> Result<Self, Box<dyn std::error::Error>> {
         if !path.is_dir() {
-            return Err("Path is not a directory".into());
+            return Err(format!("Path {:?} is not a directory", path).into());
         }
 
         Ok(Self {

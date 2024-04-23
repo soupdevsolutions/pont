@@ -2,7 +2,6 @@ use nemo::{
     file_management::Directory,
     nemo_data::{NemoProject, Source},
 };
-use url::Url;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let init_command = clap::Command::new("init");
@@ -34,9 +33,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let name = matches.get_one::<String>("name").unwrap();
             let source = matches.get_one::<String>("from").unwrap();
 
-            let source: Url = source.parse()?;
-            let source = Source::parse(&source)?;
-
+            let source = Source::parse(source)?;
             let target = current_dir.create_subdir(name)?;
 
             let nemo_project = NemoProject::load(source, &target)?;
