@@ -2,6 +2,8 @@ use url::Url;
 
 use crate::file_management::Directory;
 
+use super::SourceError;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Source {
     GitRepository(String),
@@ -9,9 +11,9 @@ pub enum Source {
 }
 
 impl Source {
-    pub fn parse(source: impl Into<String>) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn parse(source: impl Into<String>) -> Result<Self, SourceError> {
         let source = source.into();
-        let scheme = Url::parse(&source)?.scheme().to_string();
+        let scheme = Url::parse(&source).map_err(|_| SourceError::ParseError(source.clone()))?.scheme().to_string();
         match scheme.trim() {
             "http" | "https" => Ok(Self::GitRepository(source)),
             "file" => {
@@ -20,7 +22,7 @@ impl Source {
                 let source = current_dir.path.join(source);
                 Ok(Self::LocalDirectory(Directory::new(&source)?))
             }
-            _ => Err("Unsupported source type".into()),
+            _ => Err(SourceError::ParseError(source)),
         }
     }
 }

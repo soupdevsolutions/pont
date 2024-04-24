@@ -1,24 +1,26 @@
 use std::path::{Path, PathBuf};
 
+use super::DirectoryError;
+
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Directory {
     pub path: PathBuf,
 }
 
 impl Directory {
-    pub fn new(path: &Path) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn new(path: &Path) -> Result<Self, DirectoryError> {
         if !path.is_dir() {
-            return Err(format!("Path {:?} is not a directory", path).into());
+            return Err(DirectoryError::NotADirectory(path.into()));
         }
 
         Ok(Self {
-            path: path.to_path_buf(),
+            path: path.into(),
         })
     }
 
-    pub fn current() -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn current() -> Result<Self, DirectoryError> {
         Ok(Self {
-            path: std::env::current_dir()?,
+            path: std::env::current_dir().map_err(|_| DirectoryError::CurrentDir)?,
         })
     }
 
@@ -30,28 +32,27 @@ impl Directory {
         self.path.clone()
     }
 
-    pub fn create_subdir(&self, name: &str) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn create_subdir(&self, name: &str) -> Result<Self, DirectoryError> {
         let path = self.path.join(name);
         std::fs::create_dir(&path)?;
 
         Ok(Self { path })
     }
 
-    pub fn copy_files(&self, target: &Path) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn copy_files(&self, target: &Path) -> Result<Self, DirectoryError> {
         for entry in walkdir::WalkDir::new(&self.path) {
-            let entry = entry?;
+            let entry = entry.map_err(|_| DirectoryError::ReadDir(self.path.clone()))?;
             let from = entry.path();
             let to = target.join(from.strip_prefix(&self.path)?);
 
             if entry.file_type().is_dir() {
-                if let Err(e) = std::fs::create_dir(to) {
-                    eprintln!("Error creating directory: {}", e);
+                if let Err(_e) = std::fs::create_dir(to.clone()) {
+                    continue;
                 }
             } else if entry.file_type().is_file() {
-                std::fs::copy(from, to)?;
+                std::fs::copy(from, to.clone())?;
             }
         }
-
         Ok(Self {
             path: target.into(),
         })
@@ -60,14 +61,17 @@ impl Directory {
     pub fn get_files(
         &self,
         ignored_dirs: Option<&[String]>,
-    ) -> Result<Vec<PathBuf>, Box<dyn std::error::Error>> {
+    ) -> Result<Vec<PathBuf>, DirectoryError> {
         let mut files = vec![];
         let mut director_it = walkdir::WalkDir::new(&self.path).into_iter();
 
         loop {
             let entry = match director_it.next() {
                 Some(Ok(entry)) => entry,
-                Some(Err(e)) => return Err(e.into()),
+                Some(Err(e)) => {
+                    eprintln!("Error: {}", e);
+                    return Err(DirectoryError::ReadDir(self.path.clone()));
+                }
                 None => break,
             };
 
@@ -88,7 +92,7 @@ impl Directory {
 }
 
 impl TryFrom<PathBuf> for Directory {
-    type Error = Box<dyn std::error::Error>;
+    type Error = DirectoryError; 
 
     fn try_from(path: PathBuf) -> Result<Self, Self::Error> {
         Self::new(&path)
@@ -96,7 +100,7 @@ impl TryFrom<PathBuf> for Directory {
 }
 
 impl TryFrom<&Path> for Directory {
-    type Error = Box<dyn std::error::Error>;
+    type Error = DirectoryError; 
 
     fn try_from(path: &Path) -> Result<Self, Self::Error> {
         Self::new(path)
@@ -104,8 +108,8 @@ impl TryFrom<&Path> for Directory {
 }
 
 impl TryFrom<&str> for Directory {
-    type Error = Box<dyn std::error::Error>;
-
+    type Error = DirectoryError; 
+ 
     fn try_from(path: &str) -> Result<Self, Self::Error> {
         Self::new(Path::new(path))
     }

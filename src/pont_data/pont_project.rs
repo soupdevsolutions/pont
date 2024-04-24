@@ -4,7 +4,7 @@ use std::{
     io::{Read, Write},
 };
 
-use super::{PontFile, Source, PONT_FILE_NAME};
+use super::{PontFile, PontProjectError, Source, PONT_FILE_NAME};
 
 #[derive(Debug)]
 pub struct PontProject {
@@ -14,16 +14,16 @@ pub struct PontProject {
 }
 
 impl PontProject {
-    pub fn new(name: &str, directory: &Directory) -> Result<Self, Box<dyn std::error::Error>> {
-        let pontfile = PontFile::empty(name)?;
-        Ok(Self {
+    pub fn new(name: &str, directory: &Directory) -> Self {
+        let pontfile = PontFile::empty(name);
+        Self {
             name: name.to_string(),
             pontfile,
             directory: directory.clone(),
-        })
+        }
     }
 
-    pub fn load(source: Source, target: &Directory) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn load(source: Source, target: &Directory) -> Result<Self, PontProjectError> {
         match source {
             Source::GitRepository(url) => {
                 let auth = auth_git2::GitAuthenticator::default();
@@ -42,13 +42,12 @@ impl PontProject {
         })
     }
 
-    pub fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let file = std::fs::File::create(self.directory.path.join(PONT_FILE_NAME))?;
-        serde_yaml::to_writer(file, &self.pontfile)?;
+    pub fn save(&self) -> Result<(), PontProjectError> {
+        self.pontfile.save(&self.directory.path.join(PONT_FILE_NAME))?;
         Ok(())
     }
 
-    pub fn build(&self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn build(&self) -> Result<(), PontProjectError> {
         let ignore_files = self.pontfile.ignore.clone();
 
         let files = self.directory.get_files(Some(&ignore_files))?;
@@ -82,16 +81,14 @@ impl PontProject {
     }
 }
 
-impl TryFrom<&Directory> for PontProject {
-    type Error = Box<dyn std::error::Error>;
-
-    fn try_from(directory: &Directory) -> Result<Self, Self::Error> {
+impl From<&Directory> for PontProject {
+    fn from(directory: &Directory) -> Self {
         let name = directory.name();
-        let pontfile = PontFile::empty(&name)?;
-        Ok(Self {
+        let pontfile = PontFile::empty(&name);
+        Self {
             name: name.to_string(),
             pontfile,
             directory: directory.clone(),
-        })
+        }
     }
 }

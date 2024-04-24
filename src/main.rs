@@ -3,7 +3,7 @@ use pont::{
     pont_data::{PontProject, Source},
 };
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> anyhow::Result<()> {
     let init_command = clap::Command::new("init");
     let new_command = clap::Command::new("new").arg(clap::arg!(--"name" <name>).required(true));
     let build_command = clap::Command::new("build")
@@ -26,7 +26,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Some(("new", matches)) => {
             let name = matches.get_one::<String>("name").unwrap();
             let directory = current_dir.create_subdir(name)?;
-            let pont_project = PontProject::new(name, &directory)?;
+            let pont_project = PontProject::new(name, &directory);
             pont_project.save()?;
         }
         Some(("build", matches)) => {
