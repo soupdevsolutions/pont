@@ -1,15 +1,15 @@
 use std::process::Command;
 
 #[test]
-pub fn test_nemo_new() {
-    let project_name = "nemo_test_new";
+pub fn test_pont_new() {
+    let project_name = "pont_test_new";
 
-    let command = Command::new("nemo")
+    let command = Command::new("pont")
         .arg("new")
         .arg("--name")
         .arg(project_name)
         .status()
-        .expect("failed to create new nemo project");
+        .expect("failed to create new pont project");
     assert_eq!(command.success(), true);
 
     let project_path = format!("./{}", project_name);
@@ -20,17 +20,17 @@ pub fn test_nemo_new() {
 }
 
 #[test]
-pub fn test_nemo_init() {
-    let project_name = "nemo_test_init";
+pub fn test_pont_init() {
+    let project_name = "pont_test_init";
     let project_path = format!("./{}", project_name);
 
     std::fs::create_dir(project_name).expect("failed to create directory");
 
-    let command = Command::new("nemo")
+    let command = Command::new("pont")
         .current_dir(&project_path)
         .arg("init")
         .status()
-        .expect("failed to init nemo project");
+        .expect("failed to init pont project");
     assert_eq!(command.success(), true);
 
     let project_exists = std::path::Path::new(&project_path).exists();
@@ -40,29 +40,29 @@ pub fn test_nemo_init() {
 }
 
 #[test]
-pub fn test_nemo_build() {
-    let template_name = "nemo_test_template";
+pub fn test_pont_build() {
+    let template_name = "pont_test_template";
     let template_path = format!("./{}", template_name);
 
-    let new_command = Command::new("nemo")
+    let new_command = Command::new("pont")
         .arg("new")
         .arg("--name")
         .arg(template_name)
         .status()
-        .expect("failed to create new nemo project");
+        .expect("failed to create new pont project");
     assert_eq!(new_command.success(), true);
 
     std::fs::File::create(format!("{}/test.txt", template_path)).expect("failed to create file");
 
-    let project_name = "nemo_test_build";
-    let command = Command::new("nemo")
+    let project_name = "pont_test_build";
+    let command = Command::new("pont")
         .arg("build")
         .arg("--name")
         .arg(project_name)
         .arg("--from")
         .arg(format!("file://{}", template_name))
         .status()
-        .expect("failed to build nemo project");
+        .expect("failed to build pont project");
     assert_eq!(command.success(), true);
 
     let expected_project_path = format!("./{}", project_name);

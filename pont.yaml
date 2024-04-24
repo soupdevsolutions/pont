@@ -1,6 +1,6 @@
-name: nemo
+name: pont 
 commands:
-  - echo "Initializing Nemo..."
+  - echo "Initializing Pont..."
 ignore:
   - .git/*
   - .gitignore

@@ -59,7 +59,7 @@ jobs:
           with:
             toolchain: stable
             override: true
-        - name: Install Nemo
+        - name: Install Pont
           run: cargo install --path .
         - name: Run integration tests
-          run: cargo test --test test_nemo
+          run: cargo test --test test_pont

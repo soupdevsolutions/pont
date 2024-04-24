@@ -1,13 +1,13 @@
-# Nemo
+# Pont
 
-[![CI](https://github.com/soupdevsolutions/nemo/actions/workflows/ci.yml/badge.svg)](https://github.com/soupdevsolutions/nemo/actions/workflows/ci.yml)
+[![CI](https://github.com/soupdevsolutions/pont/actions/workflows/ci.yml/badge.svg)](https://github.com/soupdevsolutions/pont/actions/workflows/ci.yml)
 
-Nemo is a simple project template generator and loader. You can generate templates and load them from Git repositories or local directories.
+Pont is a simple project template generator and loader. You can generate templates and load them from Git repositories or local directories.
 
 ## Installation
 
 ```bash
-cargo install nemo
+cargo install pont
 ```
 
 ## Usage
@@ -15,19 +15,19 @@ cargo install nemo
 ### Generate a template
 
 ```bash
-nemo new <template-name>
+pont new <template-name>
 ```
 
 ### Build a project from a template
 
 ```bash
-nemo build --name <template-name> --from <source>
+pont build --name <template-name> --from <source>
 ```
 
 ## Example
 
 ```bash
-nemo new rust_server_template
+pont new rust_server_template
 cd ./rust_server_template
 
 cargo init
@@ -39,5 +39,5 @@ git commit -m "Base project"
 git push
 
 cd ../
-nemo build --name cool_rust_app --from <your-remote-repo>
+pont build --name cool_rust_app --from <your-remote-repo>
 ```

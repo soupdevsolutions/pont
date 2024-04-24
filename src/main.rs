@@ -1,6 +1,6 @@
-use nemo::{
+use pont::{
     file_management::Directory,
-    nemo_data::{NemoProject, Source},
+    pont_data::{PontProject, Source},
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -10,7 +10,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .arg(clap::arg!(--"name" <name>).required(true))
         .arg(clap::arg!(--"from" <from>).required(true));
 
-    let commands = clap::Command::new("nemo")
+    let commands = clap::Command::new("pont")
         .subcommand_required(true)
         .subcommand(init_command)
         .subcommand(new_command)
@@ -20,14 +20,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let current_dir = Directory::current()?;
     match matches.subcommand() {
         Some(("init", _)) => {
-            let nemo_project = NemoProject::try_from(&current_dir)?;
-            nemo_project.save()?;
+            let pont_project = PontProject::try_from(&current_dir)?;
+            pont_project.save()?;
         }
         Some(("new", matches)) => {
             let name = matches.get_one::<String>("name").unwrap();
             let directory = current_dir.create_subdir(name)?;
-            let nemo_project = NemoProject::new(name, &directory)?;
-            nemo_project.save()?;
+            let pont_project = PontProject::new(name, &directory)?;
+            pont_project.save()?;
         }
         Some(("build", matches)) => {
             let name = matches.get_one::<String>("name").unwrap();
@@ -36,9 +36,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let source = Source::parse(source)?;
             let target = current_dir.create_subdir(name)?;
 
-            let nemo_project = NemoProject::load(source, &target)?;
+            let pont_project = PontProject::load(source, &target)?;
 
-            nemo_project.build()?;
+            pont_project.build()?;
         }
         _ => unreachable!(),
     }

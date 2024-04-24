@@ -32,7 +32,7 @@ mod tests {
 
     #[test]
     fn test_git_repository_parse() {
-        let url = Url::parse("https://github.com/soupdevsolutions/nemo").unwrap();
+        let url = Url::parse("https://github.com/soupdevsolutions/pont").unwrap();
 
         let source = Source::parse(url.clone());
 
