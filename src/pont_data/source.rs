@@ -13,7 +13,10 @@ pub enum Source {
 impl Source {
     pub fn parse(source: impl Into<String>) -> Result<Self, SourceError> {
         let source = source.into();
-        let scheme = Url::parse(&source).map_err(|_| SourceError::ParseError(source.clone()))?.scheme().to_string();
+        let scheme = Url::parse(&source)
+            .map_err(|_| SourceError::ParseError(source.clone()))?
+            .scheme()
+            .to_string();
         match scheme.trim() {
             "http" | "https" => Ok(Self::GitRepository(source)),
             "file" => {

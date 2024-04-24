@@ -43,7 +43,8 @@ impl PontProject {
     }
 
     pub fn save(&self) -> Result<(), PontProjectError> {
-        self.pontfile.save(&self.directory.path.join(PONT_FILE_NAME))?;
+        self.pontfile
+            .save(&self.directory.path.join(PONT_FILE_NAME))?;
         Ok(())
     }
 

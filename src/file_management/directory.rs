@@ -13,9 +13,7 @@ impl Directory {
             return Err(DirectoryError::NotADirectory(path.into()));
         }
 
-        Ok(Self {
-            path: path.into(),
-        })
+        Ok(Self { path: path.into() })
     }
 
     pub fn current() -> Result<Self, DirectoryError> {
@@ -92,7 +90,7 @@ impl Directory {
 }
 
 impl TryFrom<PathBuf> for Directory {
-    type Error = DirectoryError; 
+    type Error = DirectoryError;
 
     fn try_from(path: PathBuf) -> Result<Self, Self::Error> {
         Self::new(&path)
@@ -100,7 +98,7 @@ impl TryFrom<PathBuf> for Directory {
 }
 
 impl TryFrom<&Path> for Directory {
-    type Error = DirectoryError; 
+    type Error = DirectoryError;
 
     fn try_from(path: &Path) -> Result<Self, Self::Error> {
         Self::new(path)
@@ -108,8 +106,8 @@ impl TryFrom<&Path> for Directory {
 }
 
 impl TryFrom<&str> for Directory {
-    type Error = DirectoryError; 
- 
+    type Error = DirectoryError;
+
     fn try_from(path: &str) -> Result<Self, Self::Error> {
         Self::new(Path::new(path))
     }

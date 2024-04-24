@@ -20,7 +20,7 @@ fn main() -> anyhow::Result<()> {
     let current_dir = Directory::current()?;
     match matches.subcommand() {
         Some(("init", _)) => {
-            let pont_project = PontProject::try_from(&current_dir)?;
+            let pont_project = PontProject::from(&current_dir);
             pont_project.save()?;
         }
         Some(("new", matches)) => {
