@@ -1,7 +1,15 @@
 [package]
 name = "pont"
 version = "0.1.0"
+authors = ["Mircea Teodor Oprea <mircea@mirceaoprea.net>"]
+license = "MIT"
+description = "A project template tool that works with Git repositories and local directories."
+repository = "https://github.com/soupdevsolutions/pont"
 edition = "2021"
+rust-version = "1.77"
+keywords = ["template", "project"]
+categories = ["development-tools"]
+homepage = "https://soup.dev/pont"
 
 [lib]
 name = "pont"
