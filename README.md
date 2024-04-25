@@ -18,7 +18,12 @@ cargo install pont
 ### Generate a template
 
 ```bash
-pont new <template-name>
+pont new <template-name> # to create a new directory
+```
+or
+
+```bash
+pont init # to use the current directory
 ```
 
 ### Build a project from a template
