@@ -1,6 +1,7 @@
 # Pont
 
 [![CI](https://github.com/soupdevsolutions/pont/actions/workflows/ci.yml/badge.svg)](https://github.com/soupdevsolutions/pont/actions/workflows/ci.yml)
+[![crates](https://img.shields.io/crates/v/pont)](https://crates.io/crates/pont)
 
 Pont is a simple project template generator and loader. You can generate templates and load them from Git repositories or local directories.
 
