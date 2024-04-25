@@ -6,6 +6,8 @@
 Pont is a simple project template generator and loader. You can generate templates and load them from Git repositories or local directories.
 
 ## Installation
+Currently, `pont` can only be installed using [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html).
+
 
 ```bash
 cargo install pont
