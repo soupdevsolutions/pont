@@ -51,7 +51,7 @@ impl PontProject {
     pub fn build(&self) -> Result<(), PontProjectError> {
         let ignore_files = self.pontfile.ignore.clone();
 
-        let files = self.directory.get_files(Some(&ignore_files))?;
+        let files = self.directory.get_files(ignore_files.as_deref())?;
         for f in &files {
             let mut file = File::open(f.clone())?;
             let file_name = f.file_name().unwrap().to_string_lossy().to_string();
@@ -70,12 +70,13 @@ impl PontProject {
             }
         }
 
-        self.pontfile.commands.iter().for_each(|command| {
-            let mut cmd = std::process::Command::new("sh");
-            cmd.arg("-c").arg(command);
-            let _status = cmd.status().expect("Failed to execute command");
-        });
-
+        if let Some(commands) = &self.pontfile.commands {
+            commands.iter().for_each(|command| {
+                let mut cmd = std::process::Command::new("sh");
+                cmd.arg("-c").arg(command);
+                let _status = cmd.status().expect("Failed to execute command");
+            });
+        }
         remove_file(self.directory.path.join(PONT_FILE_NAME))?;
 
         Ok(())

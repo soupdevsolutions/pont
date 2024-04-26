@@ -1,6 +1,6 @@
 [package]
 name = "pont"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Mircea Teodor Oprea <mircea@mirceaoprea.net>"]
 license = "MIT"
 description = "A project template tool that works with Git repositories and local directories."

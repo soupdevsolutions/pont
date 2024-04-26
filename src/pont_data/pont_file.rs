@@ -7,16 +7,16 @@ use super::PontFileError;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PontFile {
     pub name: String,
-    pub commands: Vec<String>,
-    pub ignore: Vec<String>,
+    pub commands: Option<Vec<String>>,
+    pub ignore: Option<Vec<String>>,
 }
 
 impl PontFile {
     pub fn empty(name: &str) -> Self {
         Self {
             name: name.to_string(),
-            commands: vec![],
-            ignore: vec![],
+            commands: Some(vec![]),
+            ignore: Some(vec![]),
         }
     }
 
