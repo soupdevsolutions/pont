@@ -32,7 +32,7 @@ pont init # to use the current directory
 pont build --name <template-name> --from <source>
 ```
 
-### How does it work?
+## How does it work?
 
 Pont creates a `pont.yaml` file when you initialize a new project, which it then consumes during the build process.  
 A `pont.yaml` file contains 3 fields: the template's name (which will be replaced by your project name), a list of commands that will be run when the project is built, and a list of ignored files (which will not get their name or content replaced).  
