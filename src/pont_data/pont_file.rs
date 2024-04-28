@@ -17,7 +17,7 @@ pub struct PontFile {
 impl PontFile {
     pub fn empty(name: &str) -> Self {
         // safe to unwrap, as the environment variable is set by Cargo
-        let version = get_env_variable(CARGO_PACKAGE_VERSION).unwrap().to_string(); 
+        let version = get_env_variable(CARGO_PACKAGE_VERSION).unwrap().to_string();
         Self {
             name: name.to_string(),
             version,
