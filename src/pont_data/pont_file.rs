@@ -2,8 +2,6 @@ use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 
-use crate::env::{get_env_variable, CARGO_PACKAGE_VERSION};
-
 use super::PontFileError;
 
 #[derive(Debug, Serialize, Deserialize)]
