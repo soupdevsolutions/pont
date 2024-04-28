@@ -13,6 +13,7 @@ pub struct PontFile {
 
 impl PontFile {
     pub fn empty(name: &str) -> Self {
+        let version = env!("CARGO_PKG_VERSION").to_string();
         Self {
             name: name.to_string(),
             commands: Some(vec![]),
