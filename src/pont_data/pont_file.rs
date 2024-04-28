@@ -2,10 +2,13 @@ use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 
+use crate::env::{get_env_variable, CARGO_PACKAGE_VERSION};
+
 use super::PontFileError;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PontFile {
+    pub version: String,
     pub name: String,
     pub commands: Option<Vec<String>>,
     pub ignore: Option<Vec<String>>,
@@ -16,6 +19,7 @@ impl PontFile {
         let version = env!("CARGO_PKG_VERSION").to_string();
         Self {
             name: name.to_string(),
+            version,
             commands: Some(vec![]),
             ignore: Some(vec![]),
         }
