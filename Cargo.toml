@@ -26,6 +26,7 @@ auth-git2 = "0.5.4"
 claim = "0.5.0"
 clap = "4.5.4"
 git2 = "0.18.3"
+globset = "0.4.14"
 serde = { version = "1.0.197", features = ["derive"] }
 serde_yaml = "0.9.34"
 thiserror = "1.0.59"

@@ -49,10 +49,12 @@ impl PontProject {
     }
 
     pub fn build(&self) -> Result<(), PontProjectError> {
-        let ignore_files = self.pontfile.ignore.clone();
-
-        let files = self.directory.get_files(ignore_files.as_deref())?;
+        let files = self.directory.get_files()?;
+        let ignored_files = self.pontfile.compile_ignored_files(&files)?;
         for f in &files {
+            if ignored_files.contains(f) {
+                continue;
+            }
             let mut file = File::open(f.clone())?;
             let file_name = f.file_name().unwrap().to_string_lossy().to_string();
 
