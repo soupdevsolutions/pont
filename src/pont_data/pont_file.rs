@@ -3,7 +3,6 @@ use std::path::{Path, PathBuf};
 use globset::{Glob, GlobSetBuilder};
 use serde::{Deserialize, Serialize};
 
-
 use super::PontFileError;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -40,7 +39,7 @@ impl PontFile {
     pub fn compile_ignored_files(&self, files: &[PathBuf]) -> Result<Vec<PathBuf>, PontFileError> {
         if self.ignore.is_none() {
             return Ok(vec![]);
-        } 
+        }
         let mut ignored_files = vec![];
 
         let mut builder = GlobSetBuilder::new();

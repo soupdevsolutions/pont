@@ -1,7 +1,8 @@
 use crate::file_management::Directory;
 use std::{
     fs::{remove_file, File},
-    io::{Read, Write}, path::Path,
+    io::{Read, Write},
+    path::Path,
 };
 
 use super::{PontFile, PontProjectError, Source, PONT_FILE_NAME};
@@ -71,7 +72,7 @@ impl PontProject {
                 let new_path = self.directory.path.join(&new_name);
                 println!("Renaming file: {:?} to {:?}", file_path, new_path);
                 std::fs::rename(file_path, new_path.clone())?;
-                file_path = new_path; 
+                file_path = new_path;
             }
 
             if file_path.is_dir() {
