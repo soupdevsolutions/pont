@@ -2,6 +2,7 @@ use crate::file_management::Directory;
 use std::{
     fs::{remove_file, File},
     io::{Read, Write},
+    path::Path,
 };
 
 use super::{PontFile, PontProjectError, Source, PONT_FILE_NAME};
@@ -49,25 +50,46 @@ impl PontProject {
     }
 
     pub fn build(&self) -> Result<(), PontProjectError> {
-        let ignore_files = self.pontfile.ignore.clone();
-
-        let files = self.directory.get_files(ignore_files.as_deref())?;
+        let files = self.directory.get_files()?;
+        let ignored_files = self.pontfile.compile_ignored_files(&files);
+        let ignored_files = ignored_files?;
         for f in &files {
-            let mut file = File::open(f.clone())?;
-            let file_name = f.file_name().unwrap().to_string_lossy().to_string();
+            println!("Processing file: {:?}", f);
+            if f.to_string_lossy().is_empty() {
+                continue;
+            }
 
-            let mut content = String::new();
-            file.read_to_string(&mut content)?;
-            let content = content.replace(&self.pontfile.name, &self.name);
+            let file_name = f.clone().to_string_lossy().to_string();
+            let file_path = Path::new(&file_name).to_path_buf();
+            if ignored_files.contains(&file_path) {
+                println!("Ignoring file: {:?}", f);
+                continue;
+            }
 
-            let mut file = File::create(f)?;
-            file.write_all(content.as_bytes())?;
-
+            let mut file_path = self.directory.path.join(&file_name);
             if file_name.contains(&self.pontfile.name) {
                 let new_name = file_name.replace(&self.pontfile.name, &self.name);
-                let new_path = f.parent().unwrap().join(new_name);
-                std::fs::rename(f, new_path)?;
+                let new_path = self.directory.path.join(&new_name);
+                println!("Renaming file: {:?} to {:?}", file_path, new_path);
+                std::fs::rename(file_path, new_path.clone())?;
+                file_path = new_path;
             }
+
+            if file_path.is_dir() {
+                continue;
+            }
+
+            println!("Processing file: {:?}", f);
+            let mut file = File::open(&file_path)?;
+            let mut content = String::new();
+            file.read_to_string(&mut content)?;
+            if !content.contains(&self.pontfile.name) {
+                continue;
+            }
+
+            let content = content.replace(&self.pontfile.name, &self.name);
+            let mut file = File::create(&file_path)?;
+            file.write_all(content.as_bytes())?;
         }
 
         if let Some(commands) = &self.pontfile.commands {

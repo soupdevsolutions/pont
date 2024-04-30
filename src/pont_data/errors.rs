@@ -16,6 +16,8 @@ pub enum PontFileError {
     ReadFile(#[from] std::io::Error),
     #[error("Could not parse file: {0}")]
     ParseFile(#[from] serde_yaml::Error),
+    #[error("Could not compile glob pattern: {0}")]
+    CompileGlobPattern(#[from] globset::Error),
 }
 
 #[derive(Debug, Error)]

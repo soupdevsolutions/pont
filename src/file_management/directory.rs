@@ -56,10 +56,8 @@ impl Directory {
         })
     }
 
-    pub fn get_files(
-        &self,
-        ignored_dirs: Option<&[String]>,
-    ) -> Result<Vec<PathBuf>, DirectoryError> {
+    pub fn get_files(&self) -> Result<Vec<PathBuf>, DirectoryError> {
+        let path = self.path.to_string_lossy().to_string();
         let mut files = vec![];
         let mut director_it = walkdir::WalkDir::new(&self.path).into_iter();
 
@@ -72,18 +70,7 @@ impl Directory {
                 }
                 None => break,
             };
-
-            let file_name = entry.file_name().to_string_lossy().to_string();
-            let should_skip = ignored_dirs.is_some() && ignored_dirs.unwrap().contains(&file_name);
-
-            if entry.file_type().is_dir() && should_skip {
-                director_it.skip_current_dir();
-                continue;
-            }
-
-            if entry.file_type().is_file() {
-                files.push(entry.path().into());
-            }
+            files.push(entry.path().strip_prefix(&path).unwrap().into());
         }
         Ok(files)
     }
