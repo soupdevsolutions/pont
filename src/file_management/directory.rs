@@ -59,6 +59,7 @@ impl Directory {
     pub fn get_files(
         &self,
     ) -> Result<Vec<PathBuf>, DirectoryError> {
+        let path = self.path.to_string_lossy().to_string();
         let mut files = vec![];
         let mut director_it = walkdir::WalkDir::new(&self.path).into_iter();
 
@@ -71,7 +72,7 @@ impl Directory {
                 }
                 None => break,
             };
-            files.push(entry.path().into());
+            files.push(entry.path().strip_prefix(&path).unwrap().into());
         }
         Ok(files)
     }

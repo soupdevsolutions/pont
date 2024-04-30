@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use globset::{Glob, GlobMatcher};
+use globset::{Glob, GlobSetBuilder};
 use serde::{Deserialize, Serialize};
 
 
@@ -37,34 +37,25 @@ impl PontFile {
         Ok(())
     }
 
-    fn compile_glob_matchers(&self) -> Result<Vec<GlobMatcher>, PontFileError> {
-        if self.ignore.is_none() {
-            return Ok(vec![]);
-        }
-        let mut matchers = vec![];
-        for pattern in self.ignore.clone().unwrap() {
-            let matcher = Glob::new(&pattern)?.compile_matcher();
-            matchers.push(matcher);
-        }
-        Ok(matchers)
-    }
-
     pub fn compile_ignored_files(&self, files: &[PathBuf]) -> Result<Vec<PathBuf>, PontFileError> {
         if self.ignore.is_none() {
             return Ok(vec![]);
         } 
         let mut ignored_files = vec![];
-        let matchers = self.compile_glob_matchers()?;
+
+        let mut builder = GlobSetBuilder::new();
+        for pattern in self.ignore.clone().unwrap() {
+            let pattern = Glob::new(&pattern)?;
+            builder.add(pattern);
+        }
+        let glob_set = builder.build()?;
+
         for file in files {
-            let mut ignore = false;
-            for matcher in &matchers {
-                if matcher.is_match(&file) {
-                    ignore = true;
-                    break;
-                }
+            if file.to_string_lossy().is_empty() {
+                continue;
             }
-            if !ignore {
-                ignored_files.push(file.into());
+            if glob_set.is_match(file) {
+                ignored_files.push(file.clone());
             }
         }
         Ok(ignored_files)
