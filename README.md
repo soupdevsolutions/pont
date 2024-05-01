@@ -54,7 +54,7 @@ ignore:
 ## Example
 
 ```bash
-pont new rust_server_template
+pont new --name rust_server_template
 cd ./rust_server_template
 
 cargo init
