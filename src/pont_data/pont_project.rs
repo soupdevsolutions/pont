@@ -5,20 +5,22 @@ use std::{
     path::Path,
 };
 
-use super::{PontFile, PontProjectError, Source, PONT_FILE_NAME};
+use super::{PontFile, PontProjectError, Source, PONT_FILE_NAME, PONT_VERSION};
 
 #[derive(Debug)]
 pub struct PontProject {
     pub name: String,
+    pub version: String,
     pub pontfile: PontFile,
     pub directory: Directory,
 }
 
 impl PontProject {
     pub fn new(name: &str, directory: &Directory) -> Self {
-        let pontfile = PontFile::empty(name);
+        let pontfile = PontFile::empty(name, PONT_VERSION);
         Self {
             name: name.to_string(),
+            version: PONT_VERSION.to_string(),
             pontfile,
             directory: directory.clone(),
         }
@@ -36,8 +38,16 @@ impl PontProject {
         };
 
         let pontfile = PontFile::parse(&target.path.join(PONT_FILE_NAME))?;
+        if pontfile.version != PONT_VERSION {
+            return Err(PontProjectError::VersionMismatch(
+                PONT_VERSION.to_string(),
+                pontfile.version,
+            ));
+        }
+
         Ok(Self {
             name: target.name(),
+            version: PONT_VERSION.to_string(),
             pontfile,
             directory: target.clone(),
         })
@@ -104,9 +114,11 @@ impl PontProject {
 impl From<&Directory> for PontProject {
     fn from(directory: &Directory) -> Self {
         let name = directory.name();
-        let pontfile = PontFile::empty(&name);
+        let version = PONT_VERSION;
+        let pontfile = PontFile::empty(&name, version);
         Self {
             name: name.to_string(),
+            version: version.to_string(),
             pontfile,
             directory: directory.clone(),
         }

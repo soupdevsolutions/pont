@@ -14,11 +14,10 @@ pub struct PontFile {
 }
 
 impl PontFile {
-    pub fn empty(name: &str) -> Self {
-        let version = env!("CARGO_PKG_VERSION").to_string();
+    pub fn empty(name: &str, version: &str) -> Self {
         Self {
             name: name.to_string(),
-            version,
+            version: version.to_string(),
             commands: Some(vec![]),
             ignore: Some(vec![]),
         }

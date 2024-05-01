@@ -30,4 +30,6 @@ pub enum PontProjectError {
     CloneGitRepo(#[from] git2::Error),
     #[error("An error occured while working with files.")]
     FileError(#[from] std::io::Error),
+    #[error("Version mismatch: Current version is {0}, but the project version is {1}.")]
+    VersionMismatch(String, String),
 }
