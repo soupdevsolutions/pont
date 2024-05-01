@@ -41,11 +41,13 @@ It is a good idea to always include the `.git` directory in the `ignore` list, a
 `pont.yaml` example:
 
 ```yaml
+version: 0.2.0
 name: pont 
 commands:
   - echo "Initializing Pont..."
 ignore:
-  - .git/
+  - .git/*
+  - *.txt
 ```
 
 
