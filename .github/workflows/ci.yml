@@ -21,7 +21,7 @@ jobs:
             toolchain: stable
             override: true
         - name: Run tests
-          run: cargo test --lib
+          run: cargo test --bins
           
   clippy:
         name: Clippy

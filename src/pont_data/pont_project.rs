@@ -54,7 +54,6 @@ impl PontProject {
         let ignored_files = self.pontfile.compile_ignored_files(&files);
         let ignored_files = ignored_files?;
         for f in &files {
-            println!("Processing file: {:?}", f);
             if f.to_string_lossy().is_empty() {
                 continue;
             }
@@ -62,7 +61,6 @@ impl PontProject {
             let file_name = f.clone().to_string_lossy().to_string();
             let file_path = Path::new(&file_name).to_path_buf();
             if ignored_files.contains(&file_path) {
-                println!("Ignoring file: {:?}", f);
                 continue;
             }
 
@@ -70,7 +68,6 @@ impl PontProject {
             if file_name.contains(&self.pontfile.name) {
                 let new_name = file_name.replace(&self.pontfile.name, &self.name);
                 let new_path = self.directory.path.join(&new_name);
-                println!("Renaming file: {:?} to {:?}", file_path, new_path);
                 std::fs::rename(file_path, new_path.clone())?;
                 file_path = new_path;
             }
@@ -79,7 +76,6 @@ impl PontProject {
                 continue;
             }
 
-            println!("Processing file: {:?}", f);
             let mut file = File::open(&file_path)?;
             let mut content = String::new();
             file.read_to_string(&mut content)?;

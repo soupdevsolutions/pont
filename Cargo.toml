@@ -1,6 +1,6 @@
 [package]
 name = "pont"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Mircea Teodor Oprea <mircea@mirceaoprea.net>"]
 license = "MIT"
 description = "A project template tool that works with Git repositories and local directories."
@@ -11,14 +11,9 @@ keywords = ["template", "project"]
 categories = ["development-tools"]
 homepage = "https://soup.dev/pont"
 
-[lib]
-name = "pont"
-path = "src/lib.rs"
-
 [[bin]]
 name = "pont"
 path = "src/main.rs"
-
 
 [dependencies]
 anyhow = "1.0.82"
