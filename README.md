@@ -16,7 +16,7 @@ Currently, `pont` can only be installed using [cargo](https://doc.rust-lang.org/
 cargo install pont
 ```
 
-## Prerequisites
+### Prerequisites
 
 - `git` should be installed and available in your PATH.
 
