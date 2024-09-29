@@ -99,7 +99,11 @@ impl PontProject {
         }
 
         fs::remove_file(self.directory.path.join(PONT_FILE_NAME))?;
-        fs::remove_dir_all(self.directory.path.join(".git"))?;
+
+        let git_path = self.directory.path.join(".git");
+        if fs::exists(git_path.clone())? {
+            fs::remove_dir_all(git_path)?;
+        }
 
         let mut commands = vec![
             "git init".to_string(),
