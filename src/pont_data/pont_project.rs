@@ -1,6 +1,6 @@
 use crate::file_management::Directory;
 use std::{
-    fs::{remove_file, File},
+    fs,
     io::{Read, Write},
     path::Path,
 };
@@ -86,7 +86,7 @@ impl PontProject {
                 continue;
             }
 
-            let mut file = File::open(&file_path)?;
+            let mut file = fs::File::open(&file_path)?;
             let mut content = String::new();
             file.read_to_string(&mut content)?;
             if !content.contains(&self.pontfile.name) {
@@ -94,19 +94,30 @@ impl PontProject {
             }
 
             let content = content.replace(&self.pontfile.name, &self.name);
-            let mut file = File::create(&file_path)?;
+            let mut file = fs::File::create(&file_path)?;
             file.write_all(content.as_bytes())?;
         }
 
-        if let Some(commands) = &self.pontfile.commands {
-            commands.iter().for_each(|command| {
-                let mut cmd = std::process::Command::new("sh");
-                cmd.arg("-c").arg(command);
-                let _status = cmd.status().expect("Failed to execute command");
-            });
-        }
-        remove_file(self.directory.path.join(PONT_FILE_NAME))?;
+        fs::remove_file(self.directory.path.join(PONT_FILE_NAME))?;
+        fs::remove_dir_all(self.directory.path.join(".git"))?;
 
+        let mut commands = vec![
+            "git init".to_string(),
+            "git add .".to_string(),
+            "git commit -m 'Init project with `pont`'".to_string(), 
+        ];
+
+        if let Some(pont_commands) = &self.pontfile.commands {
+            let mut pont_commands = pont_commands.clone();
+            commands.append(&mut pont_commands);
+        }
+
+        commands.iter().for_each(|command| {
+            let mut cmd = std::process::Command::new("sh");
+            let command = format!("cd {} && {}", self.directory.path().to_string_lossy(), command);
+            cmd.arg("-c").arg(command);
+            let _status = cmd.status().expect("Failed to execute command");
+        });
         Ok(())
     }
 }
