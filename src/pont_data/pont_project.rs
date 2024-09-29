@@ -104,7 +104,7 @@ impl PontProject {
         let mut commands = vec![
             "git init".to_string(),
             "git add .".to_string(),
-            "git commit -m 'Init project with `pont`'".to_string(), 
+            "git commit -m 'Init project with `pont`'".to_string(),
         ];
 
         if let Some(pont_commands) = &self.pontfile.commands {
@@ -114,7 +114,11 @@ impl PontProject {
 
         commands.iter().for_each(|command| {
             let mut cmd = std::process::Command::new("sh");
-            let command = format!("cd {} && {}", self.directory.path().to_string_lossy(), command);
+            let command = format!(
+                "cd {} && {}",
+                self.directory.path().to_string_lossy(),
+                command
+            );
             cmd.arg("-c").arg(command);
             let _status = cmd.status().expect("Failed to execute command");
         });
