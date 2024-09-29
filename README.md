@@ -1,5 +1,8 @@
 # Pont
 
+<img src="./logo.jpg" alt="pont logo" style="height: 200px; width:200px;"/>
+
+
 [![CI](https://github.com/soupdevsolutions/pont/actions/workflows/ci.yml/badge.svg)](https://github.com/soupdevsolutions/pont/actions/workflows/ci.yml)
 [![crates](https://img.shields.io/crates/v/pont)](https://crates.io/crates/pont)
 
